@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class CustomMailRecipient:
+class CustomMailRecipient(models.Model):
     email = models.EmailField(unique=True, verbose_name="Адрес электронной почты")
     first_name = models.CharField(max_length=50, blank=False, null=True, verbose_name="Имя")
     last_name = models.CharField(max_length=50, blank=False, null=True, verbose_name="Фамилия")

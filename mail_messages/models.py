@@ -3,7 +3,7 @@ from django.db import models
 from mail_recipients.models import CustomMailRecipient
 
 
-class CustomMessage:
+class CustomMessage(models.Model):
     theme_mail = models.CharField(max_length=50, blank=True, null=True, verbose_name="Тема письма")
     text_mail = models.TextField(blank=False, null=False, verbose_name="Текст письма")
 
@@ -15,7 +15,7 @@ class CustomMessage:
         return f"Сообщение. Тема: {self.theme_mail}"
 
 
-class Mailing:
+class Mailing(models.Model):
     stat_time = models.DateTimeField(blank=False, null=False, verbose_name="Дата и время начала отправки")
     end_time = models.DateTimeField(blank=False, null=False, verbose_name="Дата и время окончания отправки")
     status = models.Choices
