@@ -46,4 +46,3 @@ class EmailMessageDeleteView(DeleteView):
     model = CustomMessage
     template_name = "mail_messages/confirm_delete_message.html"
     success_url = reverse_lazy("mail_messages:list_email")
-    # context_object_name = "message"

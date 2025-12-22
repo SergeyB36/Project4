@@ -1,0 +1,14 @@
+{% extends 'mail_messages/base.html' %}
+{% block title %} Создание сообщения для рассылки {% endblock %}
+{% block content %}
+{% include 'mail_messages/header.html' %}
+<div class="container">
+    <h2 class="card-title pricing-card-title">Просмотр клиента:</h2>
+            <p>Ф.И.О.: {{ object }}</p>
+            <p>Адрес электронной почты: {{ object.email }}</p>
+            <p>Комментарий: {{ object.description }}</p>
+    <a class="btn btn-primary" href="{% url 'mail_recipients:list_mail_recipient'%}" role="button">Назад</a>
+    <a class="btn btn-primary" href="{% url 'mail_recipients:update_mail_recipient' object.id %}" role="button">Изменить</a>
+    <a class="btn btn-danger" href="{% url 'mail_recipients:confirm_delete_recipient' object.id %}" role="button">Удалить</a>
+</div>
+{% endblock %}

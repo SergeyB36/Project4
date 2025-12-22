@@ -1,0 +1,32 @@
+{% extends 'mail_messages/base.html' %}
+{% block title %} Спам во благо {% endblock %}
+{% block content %}
+{% include 'mail_messages/header.html' %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Ваши сообщения</h1>
+</div>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col" class="col-2">Номер п/п</th>
+      <th scope="col" class="col-3">Ф.И.О.</th>
+      <th scope="col" class="col-3">E-mail</th>
+      <th scope="col" class="col-6">Комментарий</th>
+      <th scope="col" class="col-1"></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for object in objects_list %}
+    <tr>
+      <th scope="row">{{ object.id }}</th>
+      <td>{{ object }}</td>
+      <td>{{ object.email }}</td>
+      <td>{{ object.description | truncatechars:100 }}</td>
+      <td >
+          <a class="btn btn-primary btn-sm" href="{% url 'mail_recipients:detail_mail_recipient' object.id %}" role="button">Подробнее</a>
+      </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
