@@ -17,8 +17,6 @@ DEBUG = True if os.getenv("DEBUG") == "True" else False
 ALLOWED_HOSTS = []
 
 
-# Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -60,9 +58,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-
-# Database
-# https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
     "default": {
@@ -116,9 +111,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# AUTH_USER_MODEL = "users.CustomUser"
+AUTH_USER_MODEL = "users.CustomUser"
 
-# LOGIN_REDIRECT_URL = "catalog:home"
+# LOGIN_REDIRECT_URL = "mail_messages:home"
 # LOGIN_URL = "users:login"
 
 # EMAIL_HOST = "smtp.yandex.ru"
