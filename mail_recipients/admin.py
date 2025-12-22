@@ -1,3 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+from mail_recipients.models import CustomMailRecipient
+
+
+@admin.register(CustomMailRecipient)
+class CustomMailRecipientAdmin(admin.ModelAdmin):
+    list_display = ("id", "email", "first_name", "last_name", "middle_name", "description")
+    list_filter = ("last_name", "email")
+    search_fields = ("email", "first_name", "last_name", "middle_name", "description")

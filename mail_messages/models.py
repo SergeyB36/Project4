@@ -9,7 +9,7 @@ class CustomMessage(models.Model):
 
     class Meta:
         verbose_name = "Сообщение"
-        verbose_name_plural = "Сообщений"
+        verbose_name_plural = "Сообщения"
 
     def __str__(self):
         return f"Сообщение. Тема: {self.theme_mail}"
@@ -39,7 +39,7 @@ class Mailing(models.Model):
 
     class Meta:
         verbose_name = "Рассылка"
-        verbose_name_plural = "Рассылок"
+        verbose_name_plural = "Рассылки"
 
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
