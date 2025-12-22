@@ -19,10 +19,7 @@ class Mailing(models.Model):
     stat_time = models.DateTimeField(blank=False, null=False, verbose_name="Дата и время начала отправки")
     end_time = models.DateTimeField(blank=False, null=False, verbose_name="Дата и время окончания отправки")
     status = models.Choices
-    recipients = models.ManyToManyField(CustomMailRecipient, verbose_name="Получатели", related_name='mailings')
+    recipients = models.ManyToManyField(CustomMailRecipient, verbose_name="Получатели", related_name="mailings")
     message = models.ForeignKey(
-            CustomMessage,
-            on_delete=models.CASCADE,
-            verbose_name="Сообщение",
-            related_name='mailing'
-        )
+        CustomMessage, on_delete=models.CASCADE, verbose_name="Сообщение", related_name="mailing"
+    )
