@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 from mail_recipients.models import CustomMailRecipient
 
@@ -41,7 +42,24 @@ class Mailing(models.Model):
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
 
-    def get_object(self, queryset=None):
-        obj = super().get_object(queryset)
-        obj.update_status()  # ← пересчёт и сохранение статуса
-        return obj
+    def update_status(self):
+        now = timezone.now()
+
+        for mailing in Mailing.objects.all():
+
+            if not mailing.is_moderated:
+                mailing.status = "on_moderation"
+
+            elif mailing.start_time and mailing.end_time:
+                if now < mailing.start_time:
+                    mailing.status = "created"
+                elif mailing.start_time <= now <= mailing.end_time:
+                    mailing.status = "started"
+                elif now > mailing.end_time:
+                    mailing.status = "completed"
+                else:
+                    mailing.status = "failed"
+            else:
+                mailing.status = "failed"
+
+            mailing.save()

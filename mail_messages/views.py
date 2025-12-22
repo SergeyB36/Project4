@@ -60,11 +60,22 @@ class MailingListView(ListView):
     template_name = "mail_messages/list_mailing.html"
     context_object_name = "objects_list"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        for mailing in context['object_list']:
+            mailing.update_status()
+        return context
+
 
 class MailingDetailView(DetailView):
     model = Mailing
     form_class = MailingForm
     template_name = "mail_messages/detail_mailing.html"
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        obj.update_status()
+        return obj
 
 
 class MailingUpdateView(UpdateView):
