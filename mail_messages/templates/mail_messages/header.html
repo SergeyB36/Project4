@@ -12,7 +12,7 @@
                     <span class="visually-hidden">Toggle Dropdown</span>
                   </button>
                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="#">Посмотреть рассылки</a></li>
+                    <li><a class="dropdown-item" href="{% url 'mail_messages:list_mailing' %}">Посмотреть рассылки</a></li>
                     <li><a class="dropdown-item" href="{% url 'mail_messages:create_mailing' %}">Создать рассылку</a></li>
                   </ul>
                 </div>

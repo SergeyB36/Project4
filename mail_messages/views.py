@@ -52,3 +52,29 @@ class MailingCreateView(CreateView):
     model = Mailing
     form_class = MailingForm
     template_name = "mail_messages/create_mailing.html"
+    success_url = reverse_lazy("mail_messages:list_mailing")
+
+
+class MailingListView(ListView):
+    model = Mailing
+    template_name = "mail_messages/list_mailing.html"
+    context_object_name = "objects_list"
+
+
+class MailingDetailView(DetailView):
+    model = Mailing
+    form_class = MailingForm
+    template_name = "mail_messages/detail_mailing.html"
+
+
+class MailingUpdateView(UpdateView):
+    model = Mailing
+    form_class = MailingForm
+    template_name = "mail_messages/update_mailing.html"
+    success_url = reverse_lazy("mail_messages:list_mailing")
+
+
+class MailingDeleteView(DeleteView):
+    model = Mailing
+    template_name = "mail_messages/confirm_delete_mailing.html"
+    success_url = reverse_lazy("mail_messages:list_mailing")

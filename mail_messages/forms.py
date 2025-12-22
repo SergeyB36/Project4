@@ -1,6 +1,10 @@
 from django import forms
+from django.utils import timezone
 
 from mail_messages.models import CustomMessage, Mailing
+
+
+# from mail_messages.servicies import update_status
 
 
 class MailMessagesForm(forms.ModelForm):
@@ -34,16 +38,30 @@ class MailMessagesForm(forms.ModelForm):
 class MailingForm(forms.ModelForm):
     class Meta:
         model = Mailing
-        fields = ["start_time", "end_time",]
+        fields = ["start_time", "end_time", "recipients", "message", "status"]
+        widgets = {
+            'start_time': forms.DateTimeInput(attrs={
+                'type': 'datetime-local',
+                'class': 'form-control'
+            }),
+            'end_time': forms.DateTimeInput(attrs={
+                'type': 'datetime-local',
+                'class': 'form-control'
+            }),
+            'recipients': forms.CheckboxSelectMultiple(),
+            'message': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+        }
 
     def __init__(self, *args, **kwargs):
         super(MailingForm, self).__init__(*args, **kwargs)
 
-        self.fields["start_time"].widget.attrs.update(
-            {"class": "form-control", 'type': 'datetime-local', "placeholder": "Дата в формате ГГГГ-ММ-ДД ЧЧ:ММ"},
-            format='%Y-%m-%dT%H:%M'
-        )
-        self.fields["end_time"].widget.attrs.update(
-            {"class": "form-control", 'type': 'datetime-local', "placeholder": "Дата в формате ГГГГ-ММ-ДД ЧЧ:ММ"},
-            format='%Y-%m-%dT%H:%M'
-        )
+    #
+    # def changed_data(self):
+    #     cleaned_data = super().clean()
+    #     start_time = cleaned_data.get('start_time')
+    #     end_time = cleaned_data.get('end_time')
+    #
+    #     if start_time < timezone.now():
+    #         self.add_error('start_time', 'Дата начала не может быть в прошлом')
