@@ -28,5 +28,4 @@ class Mailing(models.Model):
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылок"
 
-    def __str__(self):
-        return f"Сообщение. Тема: {self.message}"
+

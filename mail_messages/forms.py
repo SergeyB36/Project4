@@ -39,9 +39,11 @@ class MailingForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(MailingForm, self).__init__(*args, **kwargs)
 
-        self.fields["theme_mail"].widget.attrs.update(
-            {"class": "form-control"},
+        self.fields["start_time"].widget.attrs.update(
+            {"class": "form-control", 'type': 'datetime-local', "placeholder": "Дата в формате ГГГГ-ММ-ДД ЧЧ:ММ"},
+            format='%Y-%m-%dT%H:%M'
         )
-        self.fields["text_mail"].widget.attrs.update(
-            {"class": "form-control"},
+        self.fields["end_time"].widget.attrs.update(
+            {"class": "form-control", 'type': 'datetime-local', "placeholder": "Дата в формате ГГГГ-ММ-ДД ЧЧ:ММ"},
+            format='%Y-%m-%dT%H:%M'
         )

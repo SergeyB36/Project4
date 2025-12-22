@@ -8,8 +8,8 @@ from django.views.generic import (
     UpdateView,
 )
 
-from mail_messages.forms import MailMessagesForm
-from mail_messages.models import CustomMessage
+from mail_messages.forms import MailMessagesForm, MailingForm
+from mail_messages.models import CustomMessage, Mailing
 
 
 class HomeView(TemplateView):
@@ -46,3 +46,9 @@ class EmailMessageDeleteView(DeleteView):
     model = CustomMessage
     template_name = "mail_messages/confirm_delete_message.html"
     success_url = reverse_lazy("mail_messages:list_email")
+
+
+class MailingCreateView(CreateView):
+    model = Mailing
+    form_class = MailingForm
+    template_name = "mail_messages/create_mailing.html"
