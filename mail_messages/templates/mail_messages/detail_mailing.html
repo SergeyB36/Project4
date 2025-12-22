@@ -4,7 +4,8 @@
 {% include 'mail_messages/header.html' %}
 <div class="container">
     <h2 class="card-title pricing-card-title">Просмотр рассылки:</h2>
-        <p>Тема сообщения: {{ object.message.theme_mail }}</p>
+        <p>Тема рассылки: {{ object.message.theme_mail }}</p>
+        <p>Статус рассылки: {{ object.get_status_display }}</p>
         <p>Получатели: </p>
         <ul>
           {% for recipient in object.recipients.all %}
@@ -13,10 +14,8 @@
             <li>Получатели не указаны</li>
           {% endfor %}
         </ul>
-
     <a class="btn btn-primary" href="{% url 'mail_messages:list_mailing'%}" role="button">Назад</a>
     <a class="btn btn-primary" href="{% url 'mail_messages:update_mailing' object.id %}" role="button">Изменить</a>
     <a class="btn btn-danger" href="{% url 'mail_messages:confirm_delete_mailing' object.id %}" role="button">Удалить</a>
-
 </div>
 {% endblock %}

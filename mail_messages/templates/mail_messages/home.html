@@ -6,5 +6,8 @@
     <h1 class="display-4">Спам во благо</h1>
     <p class="lead">Профессиональная платформа для управления email-рассылками</p>
     <p class="lead">Создавайте, планируйте и отслеживайте эффективные email-кампании.</p>
+    {% if not user.is_authenticated %}
+    <p class="lead">Для использования нашего сервиса Вам нужно <a class="link-opacity-100" href="{% url 'users:login' %}">войти</a></p>
+    {% endif %}
 </header>
 {% endblock %}

@@ -54,14 +54,19 @@ class MailingForm(forms.ModelForm):
             }),
         }
 
+
     def __init__(self, *args, **kwargs):
         super(MailingForm, self).__init__(*args, **kwargs)
 
-    #
-    # def changed_data(self):
-    #     cleaned_data = super().clean()
-    #     start_time = cleaned_data.get('start_time')
-    #     end_time = cleaned_data.get('end_time')
-    #
-    #     if start_time < timezone.now():
-    #         self.add_error('start_time', 'Дата начала не может быть в прошлом')
+        self.fields["status"].widget.attrs.update(
+            {"class": "form-control"},
+        )
+
+
+    def changed_data(self):
+        cleaned_data = super().clean()
+        start_time = cleaned_data.get('start_time')
+        end_time = cleaned_data.get('end_time')
+
+        if start_time < timezone.now():
+            self.add_error('start_time', 'Дата начала не может быть в прошлом')
