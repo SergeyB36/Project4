@@ -16,10 +16,17 @@ class CustomMessage(models.Model):
 
 
 class Mailing(models.Model):
-    stat_time = models.DateTimeField(blank=False, null=False, verbose_name="Дата и время начала отправки")
+    start_time = models.DateTimeField(blank=False, null=False, verbose_name="Дата и время начала отправки")
     end_time = models.DateTimeField(blank=False, null=False, verbose_name="Дата и время окончания отправки")
     status = models.Choices
-    recipients = models.ManyToManyField(CustomMailRecipient, verbose_name="Получатели", related_name="mailings")
+    recipients = models.ManyToManyField(CustomMailRecipient, verbose_name="Получатели", related_name="mailing")
     message = models.ForeignKey(
         CustomMessage, on_delete=models.CASCADE, verbose_name="Сообщение", related_name="mailing"
     )
+
+    class Meta:
+        verbose_name = "Рассылка"
+        verbose_name_plural = "Рассылок"
+
+    def __str__(self):
+        return f"Сообщение. Тема: {self.message}"

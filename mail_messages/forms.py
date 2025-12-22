@@ -1,6 +1,6 @@
 from django import forms
 
-from mail_messages.models import CustomMessage
+from mail_messages.models import CustomMessage, Mailing
 
 
 class MailMessagesForm(forms.ModelForm):
@@ -30,3 +30,18 @@ class MailMessagesForm(forms.ModelForm):
         if len(theme_mail) > 50:
             self.add_error("theme_mail", "Количество символов в теме не должно быть больше 50")
         return theme_mail
+
+class MailingForm(forms.ModelForm):
+    class Meta:
+        model = Mailing
+        fields = ["start_time", "end_time",]
+
+    def __init__(self, *args, **kwargs):
+        super(MailingForm, self).__init__(*args, **kwargs)
+
+        self.fields["theme_mail"].widget.attrs.update(
+            {"class": "form-control"},
+        )
+        self.fields["text_mail"].widget.attrs.update(
+            {"class": "form-control"},
+        )
