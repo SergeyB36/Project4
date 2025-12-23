@@ -70,3 +70,6 @@ class MailingForm(forms.ModelForm):
 
         if start_time < timezone.now():
             self.add_error('start_time', 'Дата начала не может быть в прошлом')
+
+        if start_time > end_time:
+            self.add_error('start_time', 'Дата начала не может быть позже окончания')

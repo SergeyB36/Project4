@@ -6,13 +6,13 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView
 
 # from config.settings import EMAIL_HOST_USER
-# from users.forms import CustomUserCreationForm
+from users.forms import CustomUserCreationForm
 from users.models import CustomUser
 
 
 class UserCreateView(CreateView):
     model = CustomUser
-    # form_class = CustomUserCreationForm
+    form_class = CustomUserCreationForm
     success_url = reverse_lazy("users:login")
     template_name = "users/new_user_create.html"
 

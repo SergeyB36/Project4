@@ -12,6 +12,14 @@ class MailRecipientCreateView(LoginRequiredMixin, CreateView):
     template_name = "mail_recipients/create_mail_recipient.html"
     success_url = reverse_lazy("mail_recipients:list_mail_recipient")
 
+    def form_valid(self, form):
+        mail_recipient = form.save()
+        owner = self.request.user
+        mail_recipient.owner = owner
+        mail_recipient.save()
+        form.save()
+        return super().form_valid(form)
+
 
 class MailRecipientListView(LoginRequiredMixin, ListView):
     model = CustomMailRecipient

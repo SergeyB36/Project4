@@ -2,11 +2,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 
+from mail_recipients.apps import MailRecipientsConfig
 from mail_recipients.views import MailRecipientCreateView, MailRecipientListView, MailRecipientDetailView, \
     MailRecipientDeleteView, MailRecipientUpdateView
-from users.apps import UsersConfig
 
-app_name = UsersConfig.name
+app_name = MailRecipientsConfig.name
 
 urlpatterns = [
     path("create_mail_recipient/", MailRecipientCreateView.as_view(), name="create_mail_recipient"),

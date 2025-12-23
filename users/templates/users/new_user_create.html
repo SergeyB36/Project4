@@ -17,7 +17,7 @@
                         {% csrf_token %}
                         {{ form.as_p }}
                         <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Зарегистрироваться</button>
-                        <a class="btn btn-primary" href="{% url 'catalog:home' %}" role="button">На главную</a>
+                        <a class="btn btn-primary" href="{% url 'mail_messages:home' %}" role="button">На главную</a>
                     </form>
                 </div>
             </div>
