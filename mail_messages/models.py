@@ -2,15 +2,27 @@ from django.db import models
 from django.utils import timezone
 
 from mail_recipients.models import CustomMailRecipient
+from users.models import CustomUser
 
 
 class CustomMessage(models.Model):
     theme_mail = models.CharField(max_length=50, blank=True, null=True, verbose_name="Тема письма")
     text_mail = models.TextField(blank=False, null=False, verbose_name="Текст письма")
+    owner = models.ForeignKey(
+        CustomUser,
+        verbose_name="Сообщение",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="custom_messages",
+    )
+
 
     class Meta:
         verbose_name = "Сообщение"
         verbose_name_plural = "Сообщения"
+        unique_together = [('theme_mail', 'owner'), ]
+
 
     def __str__(self):
         return f"Сообщение. Тема: {self.theme_mail}"
@@ -38,9 +50,19 @@ class Mailing(models.Model):
     )
     is_moderated = models.BooleanField(default=False)
 
+    owner = models.ForeignKey(
+        CustomUser,
+        verbose_name="Менеджер клиента рассылки",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="mailing",
+    )
+
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
+        unique_together = [('message', 'owner'), ]
 
     def update_status(self):
         now = timezone.now()

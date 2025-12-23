@@ -15,7 +15,7 @@ class CustomMailRecipient(models.Model):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        related_name="users",
+        related_name="mail_recipient",
     )
 
     class Meta:
