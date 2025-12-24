@@ -75,9 +75,10 @@ class UserListView(LoginRequiredMixin, ListView):
         user = self.request.user
 
         if user.groups.filter(name="Moderator").exists():
-            return queryset
+            return queryset.exclude(pk=user.pk)
+        raise PermissionDenied("У вас недостаточно прав")
 
-        return queryset.filter(pk=user.pk)
+        return queryset.none()
 
 class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = CustomUser

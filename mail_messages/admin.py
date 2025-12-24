@@ -13,6 +13,6 @@ class CustomMessageAdmin(admin.ModelAdmin):
 
 @admin.register(Mailing)
 class MailingAdmin(admin.ModelAdmin):
-    list_display = ("id", "status", "start_time", "end_time", "message", "is_moderated")
+    list_display = ("id", "status", "start_time", "end_time", "message", "owner", "is_moderated")
     list_filter = ("message", "status", "recipients")
     search_fields = ("status", "recipients", "message",)

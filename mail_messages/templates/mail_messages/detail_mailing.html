@@ -14,8 +14,10 @@
             <li>Получатели не указаны</li>
           {% endfor %}
         </ul>
-    <a class="btn btn-primary" href="{% url 'mail_messages:list_mailing'%}" role="button">Назад</a>
+    <a class="btn btn-primary" href="{% url 'mail_messages:list_mailing'%}" role="button">К списку рассылок</a>
     <a class="btn btn-primary" href="{% url 'mail_messages:update_mailing' object.id %}" role="button">Изменить</a>
+    {% if not 'Moderator' in user.groups.all|join:',' %}
     <a class="btn btn-danger" href="{% url 'mail_messages:confirm_delete_mailing' object.id %}" role="button">Удалить</a>
+    {% endif %}
 </div>
 {% endblock %}

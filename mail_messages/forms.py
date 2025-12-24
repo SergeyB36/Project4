@@ -35,10 +35,16 @@ class MailMessagesForm(forms.ModelForm):
             self.add_error("theme_mail", "Количество символов в теме не должно быть больше 50")
         return theme_mail
 
+class MailingModeratorForm(forms.ModelForm):
+    class Meta:
+        model = Mailing
+        fields = ["is_moderated", ]
+
+
 class MailingForm(forms.ModelForm):
     class Meta:
         model = Mailing
-        fields = ["start_time", "end_time", "recipients", "message", "status"]
+        fields = ["start_time", "end_time", "recipients", "message"]
         widgets = {
             'start_time': forms.DateTimeInput(attrs={
                 'type': 'datetime-local',
@@ -54,13 +60,6 @@ class MailingForm(forms.ModelForm):
             }),
         }
 
-
-    def __init__(self, *args, **kwargs):
-        super(MailingForm, self).__init__(*args, **kwargs)
-
-        self.fields["status"].widget.attrs.update(
-            {"class": "form-control"},
-        )
 
 
     def changed_data(self):

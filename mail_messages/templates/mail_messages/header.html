@@ -14,7 +14,9 @@
                   </button>
                   <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="{% url 'mail_messages:list_mailing' %}">Посмотреть рассылки</a></li>
+                    {% if not 'Moderator' in user.groups.all|join:',' %}
                     <li><a class="dropdown-item" href="{% url 'mail_messages:create_mailing' %}">Создать рассылку</a></li>
+                    {% endif %}
                   </ul>
                 </div>
                 <div class="btn-group">
@@ -24,7 +26,9 @@
                   </button>
                   <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="{% url 'mail_messages:list_email' %}">Посмотреть сообщения</a></li>
+                    {% if not 'Moderator' in user.groups.all|join:',' %}
                     <li><a class="dropdown-item" href="{% url 'mail_messages:create_email' %}">Создать сообщение для рассылки</a></li>
+                    {% endif %}
                   </ul>
                 </div>
                 <div class="btn-group">
@@ -34,10 +38,12 @@
                   </button>
                   <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="{% url 'mail_recipients:list_mail_recipient' %}">Посмотреть клиентов</a></li>
+                    {% if not 'Moderator' in user.groups.all|join:',' %}
                     <li><a class="dropdown-item" href="{% url 'mail_recipients:create_mail_recipient' %}">Создать клиента для рассылки</a></li>
+                    {% endif %}
                   </ul>
                 </div>
-                {% if 'Модератор продуктов' in user.groups.all|join:',' %}
+                {% if 'Moderator' in user.groups.all|join:',' %}
                 <div class="btn-group">
                   <button type="button" class="p-2 btn btn-outline-primary">Пользователи</button>
                   <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">

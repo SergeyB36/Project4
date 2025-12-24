@@ -29,8 +29,10 @@ class MailRecipientListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         queryset = super().get_queryset()
-        if user.is_authenticated or user.groups.filter(name="Moderator").exists():
+        if user.is_authenticated:
             return queryset.filter(owner=user)
+        if user.groups.filter(name="Moderator").exists():
+            return queryset
         return self.model.objects.none()
 
 

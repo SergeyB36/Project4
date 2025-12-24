@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -9,7 +10,7 @@ from django.views.generic import (
     UpdateView,
 )
 
-from mail_messages.forms import MailMessagesForm, MailingForm
+from mail_messages.forms import MailMessagesForm, MailingForm, MailingModeratorForm
 from mail_messages.models import CustomMessage, Mailing
 
 
@@ -88,9 +89,11 @@ class MailingListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         queryset = super().get_queryset()
-        if user.is_authenticated or user.groups.filter(name="Moderator").exists():
+        if user.is_authenticated:
             return queryset.filter(owner=user)
-        return self.model.objects.none()
+        if user.groups.filter(name="Moderator").exists():
+            return queryset
+        return queryset.none()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -114,7 +117,36 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
     model = Mailing
     form_class = MailingForm
     template_name = "mail_messages/update_mailing.html"
-    success_url = reverse_lazy("mail_messages:list_mailing")
+    success_url = reverse_lazy("mail_messages:detail_mailing")
+
+    def get_form_class(self):
+        user = self.request.user
+        mailing = self.object
+        if user == mailing.owner:
+            return MailingForm
+        if user.groups.filter(name="Moderator").exists():
+            return MailingModeratorForm
+        raise PermissionDenied("У вас недостаточно прав")
+
+    def form_valid(self, form):
+        mail_mailing = form.save()
+        mail_mailing.is_moderated = False
+        mail_mailing.update_status()
+        mail_mailing.save()
+        form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        user = self.request.user
+
+        if user.groups.filter(name="Moderator").exists():
+            return reverse_lazy("mail_messages:list_mailing")
+
+        return reverse_lazy(
+            "mail_messages:detail_mailing",
+            kwargs={'pk': self.object.pk}
+        )
+
 
 
 class MailingDeleteView(LoginRequiredMixin, DeleteView):
