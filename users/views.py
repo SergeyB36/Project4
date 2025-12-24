@@ -3,10 +3,10 @@ import secrets
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, UpdateView, DetailView, ListView, DeleteView
 
 # from config.settings import EMAIL_HOST_USER
-from users.forms import CustomUserCreationForm
+from users.forms import CustomUserCreationForm, CustomUserModeratorForm, CustomUserUpdateForm
 from users.models import CustomUser
 
 
@@ -39,3 +39,35 @@ class UserCreateView(CreateView):
 #     user.token = None
 #     user.save()
 #     return redirect(reverse("users:login"))
+
+
+class UserUpdateView(UpdateView):
+    model = CustomUser
+    form_class = CustomUserUpdateForm
+    template_name = "users/user_update.html"
+    success_url = reverse_lazy("users:user_list")
+    # включить после настройки прав доступа
+    # def get_form_class(self):
+    #     user = self.request.user
+    #     if user == self.object.owner:
+    #         return CustomUserCreationForm
+    #     if user.groups.filter(name="Admin").exists():
+    #         return CustomUserCreationForm
+    #     if user.has_perm("catalog.can_unpublish_product"):
+    #         return CustomUserModeratorForm
+        # raise PermissionDenied("У вас недостаточно прав для редактирования этого товара")
+
+
+class UserDetailView(DetailView):
+    model = CustomUser
+    form_class = CustomUserCreationForm
+    template_name = "users/user_detail.html"
+
+
+class UserListView(ListView):
+    model = CustomUser
+    template_name = "users/user_list.html"
+    context_object_name = "objects_list"
+
+class UserDeleteView(DeleteView):
+    model = CustomUser

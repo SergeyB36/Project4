@@ -37,6 +37,15 @@
                     <li><a class="dropdown-item" href="{% url 'mail_recipients:create_mail_recipient' %}">Создать клиента для рассылки</a></li>
                   </ul>
                 </div>
+                <div class="btn-group">
+                  <button type="button" class="p-2 btn btn-outline-primary">Пользователи</button>
+                  <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="{% url 'users:user_list' %}">Посмотреть пользователей</a></li>
+                  </ul>
+                </div>
               </nav>
               {% endif %}
           </div>
@@ -44,7 +53,7 @@
             {% if user.is_authenticated %}
             <form action="{% url 'users:logout' %}" method="post">
                 {% csrf_token %}
-                <span class="badge bg-primary">{{ user }}</span>
+                <a class="btn btn-primary btn-sm" href="{% url 'users:user_detail' user.id%}" role="button">{{ user }}</a>
                 <button type="submit" class="p-2 btn btn-inline-danger">Выйти</button>
             </form>
             {% else %}

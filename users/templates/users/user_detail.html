@@ -1,0 +1,22 @@
+{% extends 'mail_messages/base.html' %}
+{% load my_tags %}
+{% block title %} {{ object.username }} {% endblock %}
+{% block content %}
+{% include 'mail_messages/header.html' %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Пользовательская информация</h1>
+</div>
+<div class="container">
+    <h2 class="card-title pricing-card-title">Пользовательская информация:</h2>
+        <p>Ф.И.О.: {{ object.username }}</p>
+        {% if object.avatar %}
+        <img  src="{{ object.avatar | media_filter }}" >
+        {% endif %}
+        <p>Телефон: {{ object.phone_number }}</p>
+        <p>Адрес электронной почты: {{ object.email }}</p>
+        <p>Страна проживания: {{ object.country }}</p>
+    <a class="btn btn-primary" href="{% url 'mail_recipients:list_mail_recipient'%}" role="button">Назад</a>
+<!--    <a class="btn btn-primary" href="{% url 'mail_recipients:update_mail_recipient' object.id %}" role="button">Редактировать</a>-->
+<!--    <a class="btn btn-danger" href="{% url 'mail_recipients:confirm_delete_recipient' object.id %}" role="button">Удалить</a>-->
+</div>
+{% endblock %}

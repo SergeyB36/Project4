@@ -23,6 +23,14 @@ class EmailMessageCreateView(LoginRequiredMixin, CreateView):
     template_name = "mail_messages/create_email.html"
     success_url = reverse_lazy("mail_messages:list_email")
 
+    def form_valid(self, form):
+        mail_message = form.save()
+        owner = self.request.user
+        mail_message.owner = owner
+        mail_message.save()
+        form.save()
+        return super().form_valid(form)
+
 
 class EmailMessageDetailView(LoginRequiredMixin, DetailView):
     model = CustomMessage
@@ -54,6 +62,14 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
     form_class = MailingForm
     template_name = "mail_messages/create_mailing.html"
     success_url = reverse_lazy("mail_messages:list_mailing")
+
+    def form_valid(self, form):
+        mail_mailing = form.save()
+        owner = self.request.user
+        mail_mailing.owner = owner
+        mail_mailing.save()
+        form.save()
+        return super().form_valid(form)
 
 
 class MailingListView(LoginRequiredMixin, ListView):
