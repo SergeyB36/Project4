@@ -6,7 +6,7 @@ from mail_messages.models import Mailing, CustomMessage
 
 @admin.register(CustomMessage)
 class CustomMessageAdmin(admin.ModelAdmin):
-    list_display = ("theme_mail", "text_mail")
+    list_display = ("theme_mail", "text_mail", "owner")
     list_filter = ("theme_mail", "text_mail")
     search_fields = ("theme_mail", "text_mail")
 

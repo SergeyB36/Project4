@@ -1,5 +1,7 @@
 import secrets
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
@@ -41,33 +43,41 @@ class UserCreateView(CreateView):
 #     return redirect(reverse("users:login"))
 
 
-class UserUpdateView(UpdateView):
-    model = CustomUser
-    form_class = CustomUserUpdateForm
-    template_name = "users/user_update.html"
-    success_url = reverse_lazy("users:user_list")
-    # включить после настройки прав доступа
-    # def get_form_class(self):
-    #     user = self.request.user
-    #     if user == self.object.owner:
-    #         return CustomUserCreationForm
-    #     if user.groups.filter(name="Admin").exists():
-    #         return CustomUserCreationForm
-    #     if user.has_perm("catalog.can_unpublish_product"):
-    #         return CustomUserModeratorForm
-        # raise PermissionDenied("У вас недостаточно прав для редактирования этого товара")
-
-
-class UserDetailView(DetailView):
+class UserUpdateView(LoginRequiredMixin, UpdateView):
     model = CustomUser
     form_class = CustomUserCreationForm
+    template_name = "users/user_update.html"
+    success_url = reverse_lazy("users:user_list")
+
+    def get_form_class(self):
+        user = self.request.user
+        target_user = self.object
+        if user == target_user:
+            return CustomUserUpdateForm
+        if user.groups.filter(name="Moderator").exists():
+            return CustomUserModeratorForm
+        raise PermissionDenied("У вас недостаточно прав")
+
+
+class UserDetailView(LoginRequiredMixin, DetailView):
+    model = CustomUser
     template_name = "users/user_detail.html"
 
 
-class UserListView(ListView):
+class UserListView(LoginRequiredMixin, ListView):
     model = CustomUser
     template_name = "users/user_list.html"
     context_object_name = "objects_list"
 
-class UserDeleteView(DeleteView):
+    def get_queryset(self):
+        """Фильтрация списка пользователей"""
+        queryset = super().get_queryset()
+        user = self.request.user
+
+        if user.groups.filter(name="Moderator").exists():
+            return queryset
+
+        return queryset.filter(pk=user.pk)
+
+class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = CustomUser

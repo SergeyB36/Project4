@@ -5,7 +5,8 @@ from django.urls import path
 
 from users.apps import UsersConfig
 
-from users.views import UserCreateView, UserDetailView, UserUpdateView, UserListView  # , email_verification
+from users.views import UserCreateView, UserDetailView, UserUpdateView, UserListView, \
+    UserDeleteView  # , email_verification
 
 app_name = UsersConfig.name
 
@@ -23,7 +24,7 @@ urlpatterns = [
     path("user_detail/<int:pk>/", UserDetailView.as_view(), name="user_detail"),
     path("user_update/<int:pk>/", UserUpdateView.as_view(), name="user_update"),
     path("user_list/", UserListView.as_view(), name="user_list"),
-    path("user_confirm_delete/<int:pk>/", UserDetailView.as_view(), name="user_confirm_delete"),
+    path("user_confirm_delete/<int:pk>/", UserDeleteView.as_view(), name="user_confirm_delete"),
 ]
 
 

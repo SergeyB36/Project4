@@ -10,7 +10,7 @@ class CustomMessage(models.Model):
     text_mail = models.TextField(blank=False, null=False, verbose_name="Текст письма")
     owner = models.ForeignKey(
         CustomUser,
-        verbose_name="Сообщение",
+        verbose_name="Создатель сообщения",
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
@@ -22,6 +22,10 @@ class CustomMessage(models.Model):
         verbose_name = "Сообщение"
         verbose_name_plural = "Сообщения"
         unique_together = [('theme_mail', 'owner'), ]
+        permissions = [
+            ("can_view_message", "Can view message"),
+        ]
+
 
 
     def __str__(self):
@@ -63,6 +67,10 @@ class Mailing(models.Model):
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
         unique_together = [('message', 'owner'), ]
+        permissions = [
+            ("can_view_mailing", "Can view mailing"),
+            ("can_moderated_mailing", "Can moderated mailing"),
+        ]
 
     def update_status(self):
         now = timezone.now()

@@ -26,6 +26,13 @@ class MailRecipientListView(LoginRequiredMixin, ListView):
     template_name = "mail_recipients/list_mail_recipient.html"
     context_object_name = "objects_list"
 
+    def get_queryset(self):
+        user = self.request.user
+        queryset = super().get_queryset()
+        if user.is_authenticated or user.groups.filter(name="Moderator").exists():
+            return queryset.filter(owner=user)
+        return self.model.objects.none()
+
 
 class MailRecipientDetailView(LoginRequiredMixin, DetailView):
     model = CustomMailRecipient

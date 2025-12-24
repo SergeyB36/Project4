@@ -22,6 +22,9 @@ class CustomMailRecipient(models.Model):
         verbose_name = "Получатель"
         verbose_name_plural = "Получатели"
         unique_together = [('email', 'owner'), ]
+        permissions = [
+            ("can_view_recipient", "Can view recipient"),
+        ]
 
     def __str__(self):
         return f"{self.last_name} {self.first_name} {self.middle_name}"

@@ -43,6 +43,14 @@ class EmailMessageListView(LoginRequiredMixin, ListView):
     template_name = "mail_messages/list_email.html"
     context_object_name = "objects_list"
 
+    def get_queryset(self):
+        user = self.request.user
+        queryset = super().get_queryset()
+        if user.is_authenticated or user.groups.filter(name="Moderator").exists():
+            return queryset.filter(owner=user)
+        return self.model.objects.none()
+
+
 
 class EmailMessageUpdateView(LoginRequiredMixin, UpdateView):
     model = CustomMessage
@@ -76,6 +84,13 @@ class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
     template_name = "mail_messages/list_mailing.html"
     context_object_name = "objects_list"
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = super().get_queryset()
+        if user.is_authenticated or user.groups.filter(name="Moderator").exists():
+            return queryset.filter(owner=user)
+        return self.model.objects.none()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
