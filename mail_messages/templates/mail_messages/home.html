@@ -3,12 +3,68 @@
 {% block content %}
 {% include 'mail_messages/header.html' %}
 <header>
-    <h1 class="display-4">Спам во благо</h1>
+    <h1 class="display-4 text-center">Спам во благо</h1>
     <p class="lead">Профессиональная платформа для управления email-рассылками</p>
     <p class="lead">Создавайте, планируйте и отслеживайте эффективные email-кампании.</p>
     {% if not user.is_authenticated %}
     <p class="lead">Для использования нашего сервиса Вам нужно <a class="link-opacity-100" href="{% url 'users:login' %}">войти</a></p>
     {% endif %}
-
 </header>
+{% if user.is_authenticated %}
+    {% if 'Moderator' in user.groups.all|join:',' %}
+    <header>
+        <h1 class="display-4">МОДЕРАТОР</h1>
+    </header>
+    {% elif user.is_staff %}
+    <header>
+        <h1 class="display-4">Администратор</h1>
+    </header>
+    {% else %}
+    <header>
+        <h1 class="display-4 text-center">Спам во благо</h1>
+        <p class="display-6">Статистика по рассылкам:</p>
+    </header>
+    <div class="container">
+        <div class="row">
+            {% if mailing_stats.count_on_moderation %}
+            <p class="text-sm-start">Рассылок на модерации: {{ mailing_stats.count_on_moderation }}</p>
+            {% else %}
+            <p class="text-sm-start">Рассылки на модерации отсутствуют</p>
+            {% endif %}
+
+            {% if mailing_stats.count_created %}
+            <p class="text-sm-start">Рассылок готовых к запуску: {{ mailing_stats.count_created }}</p>
+            {% else %}
+            <p class="text-sm-start">Рассылки готовые к запуску отсутствуют</p>
+            {% endif %}
+
+            {% if mailing_stats.count_started %}
+            <p class="text-sm-start">Рассылок запущенных: {{ mailing_stats.count_started }}</p>
+            {% else %}
+            <p class="text-sm-start">Запущенные рассылки отсутствуют</p>
+            {% endif %}
+
+            {% if mailing_stats.count_completed %}
+            <p class="text-sm-start">Завершенных рассылок: {{ mailing_stats.count_completed }}</p>
+            {% else %}
+            <p class="text-sm-start">Завершенные рассылки отсутствуют</p>
+            {% endif %}
+
+            {% if mailing_stats.count_failed %}
+            <p class="text-sm-start">Рассылок с ошибками: {{ mailing_stats.count_failed }}</p>
+            {% else %}
+            <p class="text-sm-start">Рассылки с ошибками отсутствуют</p>
+            {% endif %}
+        <div class="row">
+            <h1 class="display-6">Статистика по сообщениям:</h1>
+            <p class="text-sm-start">Количество созданных сообщений: {{ messages.count }}</p>
+        </div>
+        <div class="row">
+            <h1 class="display-6">Статистика по клиентам</h1>
+            <p class="text-sm-start">Количество обслуживаемых клиентов: {{ recipients.count }}</p>
+
+        </div>
+        </div>
+    {% endif %}
+{% endif %}
 {% endblock %}

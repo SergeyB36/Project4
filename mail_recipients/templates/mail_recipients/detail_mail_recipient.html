@@ -2,6 +2,7 @@
 {% block title %} Создание сообщения для рассылки {% endblock %}
 {% block content %}
 {% include 'mail_messages/header.html' %}
+{% if not 'Moderator' in user.groups.all|join:',' %}
 <div class="container">
     <h2 class="card-title pricing-card-title">Просмотр клиента:</h2>
             <p>Ф.И.О.: {{ object }}</p>
@@ -11,4 +12,7 @@
     <a class="btn btn-primary" href="{% url 'mail_recipients:update_mail_recipient' object.id %}" role="button">Изменить</a>
     <a class="btn btn-danger" href="{% url 'mail_recipients:confirm_delete_recipient' object.id %}" role="button">Удалить</a>
 </div>
+{% else %}
+<h2 class="card-title pricing-card-title">У Вас нет прав доступа</h2>
+{% endif %}
 {% endblock %}

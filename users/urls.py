@@ -6,7 +6,7 @@ from django.urls import path
 from users.apps import UsersConfig
 
 from users.views import UserCreateView, UserDetailView, UserUpdateView, UserListView, \
-    UserDeleteView  # , email_verification
+    UserDeleteView, email_verification
 
 app_name = UsersConfig.name
 
@@ -16,11 +16,10 @@ urlpatterns = [
     path(
         "new_user_create/", UserCreateView.as_view(template_name="users/new_user_create.html"), name="new_user_create"
     ),
-#     path("email_confirm/<str:token>", email_verification, name="email_confirm"),
-#     path(
-#         "new_user_create/", UserCreateView.as_view(template_name="users/new_user_create.html"), name="new_user_create"
-#     ),
-#     path("email_confirm/<str:token>/", email_verification, name="email_confirm"),
+    path("email_confirm/<str:token>/", email_verification, name="email_confirm"),
+    path(
+        "new_user_create/", UserCreateView.as_view(template_name="users/new_user_create.html"), name="new_user_create"
+    ),
     path("user_detail/<int:pk>/", UserDetailView.as_view(), name="user_detail"),
     path("user_update/<int:pk>/", UserUpdateView.as_view(), name="user_update"),
     path("user_list/", UserListView.as_view(), name="user_list"),

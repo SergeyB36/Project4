@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
+from django.db.models import Count
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -12,10 +13,43 @@ from django.views.generic import (
 
 from mail_messages.forms import MailMessagesForm, MailingForm, MailingModeratorForm
 from mail_messages.models import CustomMessage, Mailing
+from mail_recipients.models import CustomMailRecipient
+
+
+class CustomMailing:
+    pass
 
 
 class HomeView(TemplateView):
     template_name = "mail_messages/home.html"
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = super().get_queryset()
+        if user.is_authenticated and not user.groups.filter(name="Moderator").exists():
+            return queryset.filter(owner=user)
+        if user.groups.filter(name="Moderator").exists():
+            return queryset
+        return self.model.objects.none()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        if not user.is_authenticated:
+            return context
+        if not user.is_authenticated and not user.groups.filter(name="Moderator").exists():
+            context = super().get_context_data(**kwargs)
+            context['messages'] = CustomMessage.objects.filter(owner=user).aggregate(
+                count=Count('id'),
+            )
+            context['recipients'] = CustomMailRecipient.objects.filter(owner=user).aggregate(
+                count=Count('id'),
+            )
+            context['mailing_stats'] = Mailing.get_user_stats(self.request.user)
+        if not user.is_authenticated and user.groups.filter(name="Moderator").exists():
+            return context
+        else:
+            return context
 
 
 class EmailMessageCreateView(LoginRequiredMixin, CreateView):
@@ -47,10 +81,11 @@ class EmailMessageListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         queryset = super().get_queryset()
-        if user.is_authenticated or user.groups.filter(name="Moderator").exists():
+        if user.is_authenticated and not user.groups.filter(name="Moderator").exists():
             return queryset.filter(owner=user)
+        if user.groups.filter(name="Moderator").exists():
+            return queryset
         return self.model.objects.none()
-
 
 
 class EmailMessageUpdateView(LoginRequiredMixin, UpdateView):
@@ -74,12 +109,15 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         mail_mailing = form.save()
-        owner = self.request.user
-        mail_mailing.owner = owner
+        mail_mailing.owner = self.request.user
         mail_mailing.save()
         form.save()
         return super().form_valid(form)
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
 class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
@@ -89,7 +127,7 @@ class MailingListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         queryset = super().get_queryset()
-        if user.is_authenticated:
+        if user.is_authenticated and not user.groups.filter(name="Moderator").exists():
             return queryset.filter(owner=user)
         if user.groups.filter(name="Moderator").exists():
             return queryset
@@ -122,11 +160,9 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
     def get_form_class(self):
         user = self.request.user
         mailing = self.object
-        if user == mailing.owner:
-            return MailingForm
         if user.groups.filter(name="Moderator").exists():
             return MailingModeratorForm
-        raise PermissionDenied("У вас недостаточно прав")
+        return MailingForm
 
     def form_valid(self, form):
         mail_mailing = form.save()
@@ -147,9 +183,27 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
             kwargs={'pk': self.object.pk}
         )
 
+    def get_queryset(self):
+        """Определяем, какие объекты видны"""
+        user = self.request.user
+
+        if user.groups.filter(name="Moderator").exists():
+            return Mailing.objects.all()
+
+        return Mailing.objects.filter(owner=user)
 
 
 class MailingDeleteView(LoginRequiredMixin, DeleteView):
     model = Mailing
     template_name = "mail_messages/confirm_delete_mailing.html"
     success_url = reverse_lazy("mail_messages:list_mailing")
+
+#
+# class SendMailingCreateView(LoginRequiredMixin, CreateView):
+#     pass
+#
+# class SendMailingListView(LoginRequiredMixin, ListView):
+#     pass
+#
+# class SendMailingDetailView(LoginRequiredMixin, DetailView):
+#     pass

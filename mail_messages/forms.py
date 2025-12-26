@@ -2,6 +2,7 @@ from django import forms
 from django.utils import timezone
 
 from mail_messages.models import CustomMessage, Mailing
+from mail_recipients.models import CustomMailRecipient
 
 
 # from mail_messages.servicies import update_status
@@ -39,6 +40,16 @@ class MailingModeratorForm(forms.ModelForm):
     class Meta:
         model = Mailing
         fields = ["is_moderated", ]
+        widgets = {
+            'is_moderated': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            })
+        }
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            self.fields['is_moderated'].label = "Проверено модератором"
+            self.fields['is_moderated'].help_text = "Отметьте, если рассылка прошла модерацию"
 
 
 class MailingForm(forms.ModelForm):
@@ -60,9 +71,35 @@ class MailingForm(forms.ModelForm):
             }),
         }
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        self.fields['start_time'].input_formats = ['%Y-%m-%dT%H:%M']
+        self.fields['end_time'].input_formats = ['%Y-%m-%dT%H:%M']
+
+        if self.user and self.user.is_authenticated:
+            # Проверяем, является ли пользователь модератором
+            is_moderator = self.user.groups.filter(name="Moderator").exists()
+
+            if is_moderator:
+                # Модераторы видят все объекты
+                self.fields['recipients'].queryset = CustomMailRecipient.objects.all()
+                self.fields['message'].queryset = CustomMessage.objects.all()
+            else:
+                # Обычные пользователи видят только свои объекты
+                self.fields['recipients'].queryset = CustomMailRecipient.objects.filter(
+                    owner=self.user
+                )
+                self.fields['message'].queryset = CustomMessage.objects.filter(
+                    owner=self.user
+                )
+        else:
+            # Для неаутентифицированных пользователей - пустые QuerySet
+            self.fields['recipients'].queryset = CustomMailRecipient.objects.none()
+            self.fields['message'].queryset = CustomMessage.objects.none()
 
 
-    def changed_data(self):
+    def clean(self):
         cleaned_data = super().clean()
         start_time = cleaned_data.get('start_time')
         end_time = cleaned_data.get('end_time')

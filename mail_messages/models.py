@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Count, Q
 from django.utils import timezone
 
 from mail_recipients.models import CustomMailRecipient
@@ -93,3 +94,17 @@ class Mailing(models.Model):
                 mailing.status = "failed"
 
             mailing.save()
+
+    @classmethod
+    def get_user_stats(cls, user):
+        """Возвращает статистику рассылок для пользователя"""
+        return cls.objects.filter(owner=user).aggregate(
+            count_on_moderation=Count('id', filter=Q(status="on_moderation")),
+            count_created=Count('id', filter=Q(status="created")),
+            count_completed=Count('id', filter=Q(status="completed")),
+            count_started=Count('id', filter=Q(status="started")),
+            count_failed=Count('id', filter=Q(status="failed")),
+            total=Count('id'),
+        )
+
+

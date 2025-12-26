@@ -29,7 +29,7 @@ class MailRecipientListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         user = self.request.user
         queryset = super().get_queryset()
-        if user.is_authenticated:
+        if user.is_authenticated and not user.groups.filter(name="Moderator").exists():
             return queryset.filter(owner=user)
         if user.groups.filter(name="Moderator").exists():
             return queryset
