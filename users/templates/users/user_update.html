@@ -17,7 +17,7 @@
             <div class="card mb-4 box-shadow">
                 <div class="card-header">
                     {% if 'Moderator' in user.groups.all|join:',' %}
-                    <h4 class="my-0 font-weight-normal">Активация/Блокировка</h4>
+                    <h4 class="my-0 font-weight-normal">Активация/Блокировка пользователя {{ user }}</h4>
                     {% else %}
                     <h4 class="my-0 font-weight-normal">Введите данные для регистрации</h4>
                     {% endif %}

@@ -78,7 +78,7 @@ class Mailing(models.Model):
 
         for mailing in Mailing.objects.all():
 
-            if not mailing.is_moderated:
+            if mailing.is_moderated:
                 mailing.status = "on_moderation"
 
             elif mailing.start_time and mailing.end_time:
