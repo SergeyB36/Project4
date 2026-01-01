@@ -12,18 +12,6 @@ class CustomUserModeratorForm(forms.ModelForm):
         ]
 
 
-class CustomPasswordResetForm(PasswordResetForm):
-    email = forms.EmailField(
-        label='Email',
-        max_length=254,
-        widget=forms.EmailInput(attrs={
-            'class': 'form-control',
-            'placeholder': 'Введите ваш email',
-            'autocomplete': 'email'
-        })
-    )
-
-
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = CustomUser

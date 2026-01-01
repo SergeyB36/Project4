@@ -236,7 +236,7 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("mail_messages:list_mailing")
 
 
-def post_mail(request, pk):
+def post_mail(pk):
     """POST запрос - создаем и отправляем рассылку"""
 
     try:
