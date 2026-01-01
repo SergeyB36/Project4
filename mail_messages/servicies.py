@@ -1,5 +1,3 @@
-from itertools import count
-
 from django.conf import settings
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
@@ -19,8 +17,17 @@ def send_mailing(pk) -> None:
                 from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[recipient.email],
             )
-            print('почта отправлена')
+            print("почта отправлена")
         except Exception as e:
-            MailingAttempt.objects.create(mailing=mailing, attempt_time=timezone.now(), recipients=recipient, status="failed", details=str(e), is_sending=False)
+            MailingAttempt.objects.create(
+                mailing=mailing,
+                attempt_time=timezone.now(),
+                recipients=recipient,
+                status="failed",
+                details=str(e),
+                is_sending=False,
+            )
         else:
-            MailingAttempt.objects.create(mailing=mailing, attempt_time=timezone.now(), recipients=recipient, status="ok", is_sending=True)
+            MailingAttempt.objects.create(
+                mailing=mailing, attempt_time=timezone.now(), recipients=recipient, status="ok", is_sending=True
+            )

@@ -9,7 +9,13 @@ from mail_messages.views import (
     EmailMessageDetailView,
     EmailMessageListView,
     EmailMessageUpdateView,
-    HomeView, MailingCreateView, MailingListView, MailingDetailView, MailingUpdateView, MailingDeleteView, post_mail,
+    HomeView,
+    MailingCreateView,
+    MailingDeleteView,
+    MailingDetailView,
+    MailingListView,
+    MailingUpdateView,
+    post_mail,
 )
 
 app_name = MailMessagesConfig.name
@@ -27,7 +33,6 @@ urlpatterns = [
     path("update_mailing/<int:pk>/", MailingUpdateView.as_view(), name="update_mailing"),
     path("confirm_delete_mailing/<int:pk>/", MailingDeleteView.as_view(), name="confirm_delete_mailing"),
     path("mail_messages/<int:pk>/send", post_mail, name="send_mailing"),
-
 ]
 
 if settings.DEBUG:

@@ -5,10 +5,20 @@ from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, UpdateView, DetailView, ListView, DeleteView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 
 from config.settings import EMAIL_HOST_USER
-from users.forms import CustomUserCreationForm, CustomUserModeratorForm, CustomUserUpdateForm
+from users.forms import (
+    CustomUserCreationForm,
+    CustomUserModeratorForm,
+    CustomUserUpdateForm,
+)
 from users.models import CustomUser
 
 
@@ -79,6 +89,7 @@ class UserListView(LoginRequiredMixin, ListView):
         raise PermissionDenied("У вас недостаточно прав")
 
         return queryset.none()
+
 
 class UserDeleteView(LoginRequiredMixin, DeleteView):
     model = CustomUser

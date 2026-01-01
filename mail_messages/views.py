@@ -12,7 +12,7 @@ from django.views.generic import (
     UpdateView,
 )
 
-from mail_messages.forms import MailMessagesForm, MailingForm, MailingModeratorForm
+from mail_messages.forms import MailingForm, MailingModeratorForm, MailMessagesForm
 from mail_messages.models import CustomMessage, Mailing, MailingAttempt
 from mail_messages.servicies import send_mailing
 from mail_recipients.models import CustomMailRecipient
@@ -34,10 +34,6 @@ class HomeView(TemplateView):
             return queryset
         return self.model.objects.none()
 
-
-
-
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
@@ -45,14 +41,14 @@ class HomeView(TemplateView):
             return context
         if user.is_authenticated and not user.groups.filter(name="Moderator").exists():
             context = super().get_context_data(**kwargs)
-            context['messages'] = MailingAttempt.objects.filter(mailing__owner=user).aggregate(
-                ok_cnt=Count('id', filter=Q(status='ok')),
-                failed_cnt=Count('id', filter=Q(status='failed')),
+            context["messages"] = MailingAttempt.objects.filter(mailing__owner=user).aggregate(
+                ok_cnt=Count("id", filter=Q(status="ok")),
+                failed_cnt=Count("id", filter=Q(status="failed")),
             )
-            context['recipients'] = CustomMailRecipient.objects.filter(owner=user).aggregate(
-                count=Count('id'),
+            context["recipients"] = CustomMailRecipient.objects.filter(owner=user).aggregate(
+                count=Count("id"),
             )
-            context['mailing_stats'] = Mailing.get_user_stats(self.request.user)
+            context["mailing_stats"] = Mailing.get_user_stats(self.request.user)
         if user.is_authenticated and user.groups.filter(name="Moderator").exists():
             return context
         else:
@@ -123,8 +119,9 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
+        kwargs["user"] = self.request.user
         return kwargs
+
 
 class MailingListView(LoginRequiredMixin, ListView):
     model = Mailing
@@ -142,7 +139,7 @@ class MailingListView(LoginRequiredMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        for mailing in context['object_list']:
+        for mailing in context["object_list"]:
             mailing.update_status()
         return context
 
@@ -166,7 +163,7 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['user'] = self.request.user
+        kwargs["user"] = self.request.user
         return kwargs
 
     def get_form_class(self):
@@ -189,10 +186,7 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
         if user.groups.filter(name="Moderator").exists():
             return reverse_lazy("mail_messages:list_mailing")
 
-        return reverse_lazy(
-            "mail_messages:detail_mailing",
-            kwargs={'pk': self.object.pk}
-        )
+        return reverse_lazy("mail_messages:detail_mailing", kwargs={"pk": self.object.pk})
 
     def get_queryset(self):
         """Определяем, какие объекты видны"""
@@ -216,9 +210,9 @@ def post_mail(request, pk):
     try:
         mailing = get_object_or_404(Mailing, pk=pk)
         send_mailing(pk)
-        mailing.status = 'completed'
+        mailing.status = "completed"
         mailing.end_time = timezone.now()
         mailing.save()
-        return redirect('mail_messages:home')
-    except Exception as e:
-        return redirect('mail_messages:home')
+        return redirect("mail_messages:home")
+    except Exception:
+        return redirect("mail_messages:home")

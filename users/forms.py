@@ -7,7 +7,9 @@ from users.models import CustomUser
 class CustomUserModeratorForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ["is_active", ]
+        fields = [
+            "is_active",
+        ]
 
 
 class CustomUserCreationForm(UserCreationForm):

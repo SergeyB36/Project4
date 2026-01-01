@@ -3,8 +3,13 @@ from django.conf.urls.static import static
 from django.urls import path
 
 from mail_recipients.apps import MailRecipientsConfig
-from mail_recipients.views import MailRecipientCreateView, MailRecipientListView, MailRecipientDetailView, \
-    MailRecipientDeleteView, MailRecipientUpdateView
+from mail_recipients.views import (
+    MailRecipientCreateView,
+    MailRecipientDeleteView,
+    MailRecipientDetailView,
+    MailRecipientListView,
+    MailRecipientUpdateView,
+)
 
 app_name = MailRecipientsConfig.name
 
@@ -14,7 +19,6 @@ urlpatterns = [
     path("detail_mail_recipient/<int:pk>/", MailRecipientDetailView.as_view(), name="detail_mail_recipient"),
     path("confirm_delete_recipient/<int:pk>/", MailRecipientDeleteView.as_view(), name="confirm_delete_recipient"),
     path("update_mail_recipient/<int:pk>/", MailRecipientUpdateView.as_view(), name="update_mail_recipient"),
-
 ]
 
 

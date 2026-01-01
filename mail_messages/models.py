@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Count, Q, ForeignKey
+from django.db.models import Count, ForeignKey, Q
 from django.utils import timezone
 
 from mail_recipients.models import CustomMailRecipient
@@ -18,16 +18,15 @@ class CustomMessage(models.Model):
         related_name="custom_messages",
     )
 
-
     class Meta:
         verbose_name = "Сообщение"
         verbose_name_plural = "Сообщения"
-        unique_together = [('theme_mail', 'owner'), ]
+        unique_together = [
+            ("theme_mail", "owner"),
+        ]
         permissions = [
             ("can_view_message", "Can view message"),
         ]
-
-
 
     def __str__(self):
         return f"Сообщение. Тема: {self.theme_mail}"
@@ -35,20 +34,15 @@ class CustomMessage(models.Model):
 
 class Mailing(models.Model):
     STATUS_CHOICES = [
-        ('on_moderation', 'На модерации'),
-        ('created', 'Создана'),
-        ('started', 'Готова к отправке'),
-        ('completed', 'Завершена'),
-        ('failed', 'Ошибка'),
+        ("on_moderation", "На модерации"),
+        ("created", "Создана"),
+        ("started", "Готова к отправке"),
+        ("completed", "Завершена"),
+        ("failed", "Ошибка"),
     ]
     start_time = models.DateTimeField(blank=False, null=False, verbose_name="Дата и время начала отправки")
     end_time = models.DateTimeField(blank=False, null=False, verbose_name="Дата и время окончания отправки")
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='on_moderation',
-        verbose_name="Статус"
-    )
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="on_moderation", verbose_name="Статус")
     recipients = models.ManyToManyField(CustomMailRecipient, verbose_name="Получатели", related_name="mailing")
     message = models.ForeignKey(
         CustomMessage, on_delete=models.CASCADE, verbose_name="Сообщение", related_name="mailing"
@@ -67,7 +61,9 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
-        unique_together = [('message', 'owner'), ]
+        unique_together = [
+            ("message", "owner"),
+        ]
         permissions = [
             ("can_view_mailing", "Can view mailing"),
             ("can_moderated_mailing", "Can moderated mailing"),
@@ -97,16 +93,21 @@ class Mailing(models.Model):
     def get_user_stats(cls, user):
         """Возвращает статистику рассылок для пользователя"""
         return cls.objects.filter(owner=user).aggregate(
-            count_on_moderation=Count('id', filter=Q(status="on_moderation")),
-            count_created=Count('id', filter=Q(status="created")),
-            count_completed=Count('id', filter=Q(status="completed")),
-            count_started=Count('id', filter=Q(status="started")),
-            count_failed=Count('id', filter=Q(status="failed")),
-            total=Count('id'),
+            count_on_moderation=Count("id", filter=Q(status="on_moderation")),
+            count_created=Count("id", filter=Q(status="created")),
+            count_completed=Count("id", filter=Q(status="completed")),
+            count_started=Count("id", filter=Q(status="started")),
+            count_failed=Count("id", filter=Q(status="failed")),
+            total=Count("id"),
         )
 
+
 class MailingAttempt(models.Model):
-    recipients = models.ForeignKey( CustomMailRecipient, on_delete=models.CASCADE, related_name="mailing_recipients",)
+    recipients = models.ForeignKey(
+        CustomMailRecipient,
+        on_delete=models.CASCADE,
+        related_name="mailing_recipients",
+    )
     mailing = ForeignKey(
         Mailing,
         verbose_name="Рассылка",
@@ -115,17 +116,14 @@ class MailingAttempt(models.Model):
         on_delete=models.CASCADE,
         related_name="mailing",
     )
-    STATUS_CHOICES = [('ok', 'Успешно'), ('failed', 'Ошибка')]
+    STATUS_CHOICES = [("ok", "Успешно"), ("failed", "Ошибка")]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Статус отправки")
     is_sending = models.BooleanField(null=True, blank=True)
-    details = models.TextField(
-        verbose_name="Детали отправки",
-        blank=True,
-        null=True
-    )
+    details = models.TextField(verbose_name="Детали отправки", blank=True, null=True)
     attempt_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
     class Meta:
         verbose_name = "Попытка отправки рассылки"
         verbose_name_plural = "Попытки отправки рассылок"
-        ordering = ['-attempt_time']
+        ordering = ["-attempt_time"]

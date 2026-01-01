@@ -21,7 +21,9 @@ class CustomMailRecipient(models.Model):
     class Meta:
         verbose_name = "Получатель"
         verbose_name_plural = "Получатели"
-        unique_together = [('email', 'owner'), ]
+        unique_together = [
+            ("email", "owner"),
+        ]
         permissions = [
             ("can_view_recipient", "Can view recipient"),
         ]

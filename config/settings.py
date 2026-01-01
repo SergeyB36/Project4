@@ -125,13 +125,13 @@ LOGIN_URL = "users:login"
 # DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = 'localhost'
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+EMAIL_HOST = "localhost"
 EMAIL_PORT = 25
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = False
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
 
 # CACHES_ENABLED = True
 # if CACHES_ENABLED:
