@@ -12,6 +12,8 @@
       <th scope="col" class="col-3">Тема сообщения</th>
       <th scope="col" class="col-5">Текст сообщения</th>
       <th scope="col" class="col-2">Статус</th>
+      <th scope="col" class="col-2">Детали</th>
+      <th scope="col" class="col-2">Отправка</th>
     </tr>
   </thead>
   <tbody>
@@ -33,6 +35,16 @@
       {% endif %}
       <td >
           <a class="btn btn-primary btn-sm" href="{% url 'mail_messages:detail_mailing' object.id %}" role="button">Подробнее</a>
+      </td>
+      <td>
+        {% if object.status != "started" %}
+        <button type="button" class="btn btn-secondary btn-sm">Отправить</button>
+        {% elif object.status == "started"%}
+        <form method="post" action="{% url 'mail_messages:send_mailing' object.id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success btn-sm">Отправить</button>
+        </form>
+        {% endif %}
       </td>
     </tr>
   {% endfor %}

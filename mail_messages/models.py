@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Count, Q
+from django.db.models import Count, Q, ForeignKey
 from django.utils import timezone
 
 from mail_recipients.models import CustomMailRecipient
@@ -78,20 +78,18 @@ class Mailing(models.Model):
 
         for mailing in Mailing.objects.all():
 
-            if mailing.is_moderated:
-                mailing.status = "on_moderation"
-
-            elif mailing.start_time and mailing.end_time:
-                if now < mailing.start_time:
-                    mailing.status = "created"
-                elif mailing.start_time <= now <= mailing.end_time:
-                    mailing.status = "started"
-                elif now > mailing.end_time:
-                    mailing.status = "completed"
+            if not mailing.is_moderated:
+                if mailing.start_time and mailing.end_time:
+                    if now < mailing.start_time:
+                        mailing.status = "created"
+                    elif mailing.start_time <= now <= mailing.end_time:
+                        mailing.status = "started"
+                    elif now > mailing.end_time:
+                        mailing.status = "completed"
+                    else:
+                        mailing.status = "failed"
                 else:
                     mailing.status = "failed"
-            else:
-                mailing.status = "failed"
 
             mailing.save()
 
@@ -107,4 +105,22 @@ class Mailing(models.Model):
             total=Count('id'),
         )
 
-
+class MailingAttempt(models.Model):
+    recipients = models.ForeignKey( CustomMailRecipient, on_delete=models.CASCADE, related_name="mailing_recipients",)
+    mailing = ForeignKey(
+        Mailing,
+        verbose_name="Рассылка",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="mailing",
+    )
+    STATUS_CHOICES = [('ok', 'Успешно'), ('failed', 'Ошибка')]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Статус отправки")
+    is_sending = models.BooleanField(null=True, blank=True)
+    details = ''
+    attempt_time = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        verbose_name = "Попытка отправки рассылки"
+        verbose_name_plural = "Попытки отправки рассылок"
