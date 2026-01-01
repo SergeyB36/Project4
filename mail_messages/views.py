@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import (
     CreateView,
@@ -12,7 +13,8 @@ from django.views.generic import (
 )
 
 from mail_messages.forms import MailMessagesForm, MailingForm, MailingModeratorForm
-from mail_messages.models import CustomMessage, Mailing
+from mail_messages.models import CustomMessage, Mailing, MailingAttempt
+from mail_messages.servicies import send_mailing
 from mail_recipients.models import CustomMailRecipient
 
 
@@ -37,7 +39,7 @@ class HomeView(TemplateView):
         user = self.request.user
         if not user.is_authenticated:
             return context
-        if not user.is_authenticated and not user.groups.filter(name="Moderator").exists():
+        if user.is_authenticated and not user.groups.filter(name="Moderator").exists():
             context = super().get_context_data(**kwargs)
             context['messages'] = CustomMessage.objects.filter(owner=user).aggregate(
                 count=Count('id'),
@@ -46,7 +48,7 @@ class HomeView(TemplateView):
                 count=Count('id'),
             )
             context['mailing_stats'] = Mailing.get_user_stats(self.request.user)
-        if not user.is_authenticated and user.groups.filter(name="Moderator").exists():
+        if user.is_authenticated and user.groups.filter(name="Moderator").exists():
             return context
         else:
             return context
@@ -155,11 +157,15 @@ class MailingUpdateView(LoginRequiredMixin, UpdateView):
     model = Mailing
     form_class = MailingForm
     template_name = "mail_messages/update_mailing.html"
-    success_url = reverse_lazy("mail_messages:detail_mailing")
+    # success_url = reverse_lazy("mail_messages:detail_mailing")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def get_form_class(self):
         user = self.request.user
-        mailing = self.object
         if user.groups.filter(name="Moderator").exists():
             return MailingModeratorForm
         return MailingForm
@@ -207,3 +213,18 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
 #
 # class SendMailingDetailView(LoginRequiredMixin, DetailView):
 #     pass
+
+def post_mail(request, *args, **kwargs):
+    """GET запрос - создаем и отправляем рассылку"""
+
+
+    try:
+        mailing = get_object_or_404(Mailing, pk=kwargs['pk'])
+        send_mailing(mailing)
+        mailing.status = 'completed'
+        mailing.save()
+        return redirect('mail_messages:home')
+
+    except Exception as e:
+        print(e)
+        return redirect('mail_messages:home')

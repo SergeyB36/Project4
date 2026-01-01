@@ -37,7 +37,7 @@ class Mailing(models.Model):
     STATUS_CHOICES = [
         ('on_moderation', 'На модерации'),
         ('created', 'Создана'),
-        ('started', 'Запущена'),
+        ('started', 'Готова к отправке'),
         ('completed', 'Завершена'),
         ('failed', 'Ошибка'),
     ]
@@ -118,9 +118,14 @@ class MailingAttempt(models.Model):
     STATUS_CHOICES = [('ok', 'Успешно'), ('failed', 'Ошибка')]
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, verbose_name="Статус отправки")
     is_sending = models.BooleanField(null=True, blank=True)
-    details = ''
-    attempt_time = models.DateTimeField(null=True, blank=True)
+    details = models.TextField(
+        verbose_name="Детали отправки",
+        blank=True,
+        null=True
+    )
+    attempt_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     class Meta:
         verbose_name = "Попытка отправки рассылки"
         verbose_name_plural = "Попытки отправки рассылок"
+        ordering = ['-attempt_time']

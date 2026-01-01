@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-from mail_messages.models import Mailing, CustomMessage
-
+from mail_messages.models import Mailing, CustomMessage, MailingAttempt
 
 
 @admin.register(CustomMessage)
@@ -16,3 +15,9 @@ class MailingAdmin(admin.ModelAdmin):
     list_display = ("id", "status", "start_time", "end_time", "message", "owner", "is_moderated")
     list_filter = ("message", "status", "recipients")
     search_fields = ("status", "recipients", "message",)
+
+
+
+@admin.register(MailingAttempt)
+class MailingAttemptAdmin(admin.ModelAdmin):
+    list_display = ("id", "mailing", "status", "attempt_time", "details")
