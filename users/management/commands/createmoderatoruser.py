@@ -34,7 +34,7 @@ class Command(BaseCommand):
             user.set_password("1234")
             user.is_active = True
             user.save()
-            self.stdout.write(self.style.SUCCESS(f"Пользователь с правами модератора успешно создан"))
+            self.stdout.write(self.style.SUCCESS("Пользователь с правами модератора успешно создан"))
 
         user.groups.add(group)
 

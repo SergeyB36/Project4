@@ -66,7 +66,7 @@ class EmailMessageCreateView(LoginRequiredMixin, CreateView):
         mail_message = form.save()
         owner = self.request.user
         mail_message.owner = owner
-        cache.delete(f'user_{self.request.user.id}_messages')
+        cache.delete(f"user_{self.request.user.id}_messages")
         return super().form_valid(form)
 
 
@@ -80,7 +80,7 @@ class EmailMessageDetailView(LoginRequiredMixin, DetailView):
         obj = cache.get(cache_key)
         if obj is None:
             obj = super().get_object(queryset)
-            if hasattr(obj, 'update_status'):
+            if hasattr(obj, "update_status"):
                 obj.update_status()
             cache.set(cache_key, obj)
         return obj
@@ -109,8 +109,8 @@ class EmailMessageUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         response = super().form_valid(form)
-        cache.delete(f'mail_message_{self.object.pk}')
-        cache.delete(f'user_{self.request.user.id}_messages')
+        cache.delete(f"mail_message_{self.object.pk}")
+        cache.delete(f"user_{self.request.user.id}_messages")
         return response
 
 
@@ -126,8 +126,8 @@ class EmailMessageDeleteView(LoginRequiredMixin, DeleteView):
 
         response = super().delete(request, *args, **kwargs)
 
-        cache.delete(f'mail_message_{pk}')
-        cache.delete(f'user_{user_id}_messages')
+        cache.delete(f"mail_message_{pk}")
+        cache.delete(f"user_{user_id}_messages")
 
         return response
 
@@ -142,7 +142,7 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
         mail_mailing = form.save()
         mail_mailing.owner = self.request.user
         mail_mailing.save()
-        cache.delete(f'user_{self.request.user.id}_messages')
+        cache.delete(f"user_{self.request.user.id}_messages")
         return super().form_valid(form)
 
     def get_form_kwargs(self):

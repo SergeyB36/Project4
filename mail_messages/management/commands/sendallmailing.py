@@ -7,22 +7,17 @@ from mail_messages.views import post_mail
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument('--email', type=str, help='Email пользователя')
+        parser.add_argument("--email", type=str, help="Email пользователя")
 
     def handle(self, *args, **options):
         User = get_user_model()
-        email = options['email']
+        email = options["email"]
         user = User.objects.get(email=email)
-        mailing_list = Mailing.objects.filter(
-                owner=user,
-                status='started'
-            )
+        mailing_list = Mailing.objects.filter(owner=user, status="started")
         print(f"Получено {len(mailing_list)} рассылок")
         for mailing in mailing_list:
             try:
                 print(f"Отравляю {mailing}")
                 post_mail(mailing.pk)
-            except:
-                print(f"Не найдено ни одной активной рассылки")
-
-
+            except Exception as e:
+                print(f"Ошибка {e}")
