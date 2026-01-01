@@ -1,5 +1,4 @@
-from smtplib import SMTPException
-
+from itertools import count
 
 from django.conf import settings
 from django.core.mail import send_mail
@@ -22,6 +21,6 @@ def send_mailing(pk) -> None:
             )
             print('почта отправлена')
         except Exception as e:
-            MailingAttempt.objects.create(mailing=mailing, attempt_time=timezone.now(), recipient=recipient, status="failed", detail=str(e), is_sending=False)
+            MailingAttempt.objects.create(mailing=mailing, attempt_time=timezone.now(), recipients=recipient, status="failed", details=str(e), is_sending=False)
         else:
-            MailingAttempt.objects.create(mailing=mailing, attempt_time=timezone.now(), recipient=recipient, status="ok", is_sending=True)
+            MailingAttempt.objects.create(mailing=mailing, attempt_time=timezone.now(), recipients=recipient, status="ok", is_sending=True)

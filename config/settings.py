@@ -125,9 +125,7 @@ LOGIN_URL = "users:login"
 # DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 
 
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 25
 EMAIL_USE_TLS = False

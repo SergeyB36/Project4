@@ -21,46 +21,27 @@
     </header>
     {% else %}
     <header>
-        <p class="display-6">Статистика по рассылкам:</p>
+        <p class="display-6">Статистика пользователя:</p>
     </header>
     <div class="container">
         <div class="row">
-            {% if mailing_stats.count_on_moderation %}
-            <p class="text-sm-start">Рассылок на модерации: {{ mailing_stats.count_on_moderation }}</p>
+            {% if mailing_stats.total and mailing_stats.total != 0 %}
+            <p class="text-sm-start">Рассылок создано: {{ mailing_stats.total }}</p>
             {% else %}
-            <p class="text-sm-start">Рассылки на модерации отсутствуют</p>
+            <p class="text-sm-start">Ни одной рассылки не создано</p>
             {% endif %}
 
-            {% if mailing_stats.count_created %}
-            <p class="text-sm-start">Рассылок готовых к запуску: {{ mailing_stats.count_created }}</p>
+            {% if mailing_stats.count_started %}
+            <p class="text-sm-start">Рассылок готовых к запуску: {{ mailing_stats.count_started }}</p>
             {% else %}
             <p class="text-sm-start">Рассылки готовые к запуску отсутствуют</p>
             {% endif %}
 
-            {% if mailing_stats.count_started %}
-            <p class="text-sm-start">Рассылок запущенных: {{ mailing_stats.count_started }}</p>
-            {% else %}
-            <p class="text-sm-start">Запущенные рассылки отсутствуют</p>
-            {% endif %}
-
-            {% if mailing_stats.count_completed %}
-            <p class="text-sm-start">Завершенных рассылок: {{ mailing_stats.count_completed }}</p>
-            {% else %}
-            <p class="text-sm-start">Завершенные рассылки отсутствуют</p>
-            {% endif %}
-
-            {% if mailing_stats.count_failed %}
-            <p class="text-sm-start">Рассылок с ошибками: {{ mailing_stats.count_failed }}</p>
-            {% else %}
-            <p class="text-sm-start">Рассылки с ошибками отсутствуют</p>
-            {% endif %}
-        <div class="row">
-            <h1 class="display-6">Статистика по сообщениям:</h1>
-            <p class="text-sm-start">Количество созданных сообщений: {{ messages.count }}</p>
-        </div>
-        <div class="row">
-            <h1 class="display-6">Статистика по клиентам</h1>
             <p class="text-sm-start">Количество обслуживаемых клиентов: {{ recipients.count }}</p>
+
+            <p class="text-sm-start">Успешно отправленных сообщений: {{ messages.ok_cnt|default:"0" }}</p>
+
+            <p class="text-sm-start">Сообщений с ошибкой отправки(неотправленных): {{ messages.failed_cnt|default:"0" }}</p>
 
         </div>
         </div>

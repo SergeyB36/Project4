@@ -1,8 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.exceptions import PermissionDenied
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -34,6 +34,10 @@ class HomeView(TemplateView):
             return queryset
         return self.model.objects.none()
 
+
+
+
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
@@ -41,8 +45,9 @@ class HomeView(TemplateView):
             return context
         if user.is_authenticated and not user.groups.filter(name="Moderator").exists():
             context = super().get_context_data(**kwargs)
-            context['messages'] = CustomMessage.objects.filter(owner=user).aggregate(
-                count=Count('id'),
+            context['messages'] = MailingAttempt.objects.filter(mailing__owner=user).aggregate(
+                ok_cnt=Count('id', filter=Q(status='ok')),
+                failed_cnt=Count('id', filter=Q(status='failed')),
             )
             context['recipients'] = CustomMailRecipient.objects.filter(owner=user).aggregate(
                 count=Count('id'),
@@ -204,27 +209,16 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
     template_name = "mail_messages/confirm_delete_mailing.html"
     success_url = reverse_lazy("mail_messages:list_mailing")
 
-#
-# class SendMailingCreateView(LoginRequiredMixin, CreateView):
-#     pass
-#
-# class SendMailingListView(LoginRequiredMixin, ListView):
-#     pass
-#
-# class SendMailingDetailView(LoginRequiredMixin, DetailView):
-#     pass
 
-def post_mail(request, *args, **kwargs):
-    """GET запрос - создаем и отправляем рассылку"""
-
+def post_mail(request, pk):
+    """POST запрос - создаем и отправляем рассылку"""
 
     try:
-        mailing = get_object_or_404(Mailing, pk=kwargs['pk'])
-        send_mailing(mailing)
+        mailing = get_object_or_404(Mailing, pk=pk)
+        send_mailing(pk)
         mailing.status = 'completed'
+        mailing.end_time = timezone.now()
         mailing.save()
         return redirect('mail_messages:home')
-
     except Exception as e:
-        print(e)
         return redirect('mail_messages:home')
