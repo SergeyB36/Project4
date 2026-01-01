@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordResetForm
 
 from users.models import CustomUser
 
@@ -10,6 +10,18 @@ class CustomUserModeratorForm(forms.ModelForm):
         fields = [
             "is_active",
         ]
+
+
+class CustomPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(
+        label='Email',
+        max_length=254,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Введите ваш email',
+            'autocomplete': 'email'
+        })
+    )
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -33,18 +45,18 @@ class CustomUserUpdateForm(forms.ModelForm):
         model = CustomUser
         fields = ["avatar", "username", "phone_number", "country"]
 
-        def __init__(self, *args, **kwargs):
-            super(CustomUserUpdateForm, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(CustomUserUpdateForm, self).__init__(*args, **kwargs)
 
-            self.fields["avatar"].widget.attrs.update(
-                {"class": "form-control"},
-            )
-            self.fields["username"].widget.attrs.update(
-                {"class": "form-control"},
-            )
-            self.fields["phone_number"].widget.attrs.update(
-                {"class": "form-control"},
-            )
-            self.fields["country"].widget.attrs.update(
-                {"class": "form-control"},
-            )
+        self.fields["avatar"].widget.attrs.update(
+            {"class": "form-control"},
+        )
+        self.fields["username"].widget.attrs.update(
+            {"class": "form-control"},
+        )
+        self.fields["phone_number"].widget.attrs.update(
+            {"class": "form-control"},
+        )
+        self.fields["country"].widget.attrs.update(
+            {"class": "form-control"},
+        )

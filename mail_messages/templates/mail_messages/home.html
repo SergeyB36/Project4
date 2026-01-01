@@ -41,7 +41,9 @@
 
             <p class="text-sm-start">Успешно отправленных сообщений: {{ messages.ok_cnt|default:"0" }}</p>
 
-            <p class="text-sm-start">Сообщений с ошибкой отправки(неотправленных): {{ messages.failed_cnt|default:"0" }}</p>
+            <p class="text-sm-start">Успешных попыток отправки сообщений: {{ messages.ok_cnt|default:"0" }}</p>
+
+            <p class="text-sm-start">Неуспешных попыток отправки сообщений: {{ messages.failed_cnt|default:"0" }}</p>
 
         </div>
         </div>

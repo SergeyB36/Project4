@@ -1,6 +1,8 @@
 import secrets
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
@@ -17,7 +19,7 @@ from config.settings import EMAIL_HOST_USER
 from users.forms import (
     CustomUserCreationForm,
     CustomUserModeratorForm,
-    CustomUserUpdateForm,
+    CustomUserUpdateForm, CustomPasswordResetForm,
 )
 from users.models import CustomUser
 
@@ -83,11 +85,9 @@ class UserListView(LoginRequiredMixin, ListView):
         """Фильтрация списка пользователей"""
         queryset = super().get_queryset()
         user = self.request.user
-
         if user.groups.filter(name="Moderator").exists():
             return queryset.exclude(pk=user.pk)
         raise PermissionDenied("У вас недостаточно прав")
-
         return queryset.none()
 
 

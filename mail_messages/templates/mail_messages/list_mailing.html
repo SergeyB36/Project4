@@ -11,6 +11,7 @@
       <th scope="col" class="col-2">Номер п/п</th>
       <th scope="col" class="col-3">Тема сообщения</th>
       <th scope="col" class="col-5">Текст сообщения</th>
+      <th scope="col" class="col-5">Время</th>
       <th scope="col" class="col-2">Статус</th>
       <th scope="col" class="col-2">Детали</th>
       <th scope="col" class="col-2">Отправка</th>
@@ -22,6 +23,7 @@
       <th scope="row">{{ object.id }}</th>
       <td>{{ object.message.theme_mail }}</td>
       <td>{{ object.message.text_mail | truncatechars:50 }}</td>
+      <td>{{ object.start_time }} - {{ object.end_time }}</td>
       {% if object.status == "on_moderation" %}
       <td class="btn btn-secondary">{{ object.get_status_display }}</td>
       {% elif object.status == "created" %}
