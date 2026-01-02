@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
 from mail_messages.models import Mailing
-from mail_messages.views import post_mail
+from mail_messages.views import post_mail_command
 
 
 class Command(BaseCommand):
@@ -18,6 +18,6 @@ class Command(BaseCommand):
         for mailing in mailing_list:
             try:
                 print(f"Отравляю {mailing}")
-                post_mail(mailing.pk)
+                post_mail_command(mailing.pk)
             except Exception as e:
                 print(f"Ошибка {e}")

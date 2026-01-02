@@ -236,7 +236,20 @@ class MailingDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("mail_messages:list_mailing")
 
 
-def post_mail(pk):
+def post_mail_command(pk):
+    """POST запрос - создаем и отправляем рассылку"""
+
+    try:
+        mailing = get_object_or_404(Mailing, pk=pk)
+        send_mailing(pk)
+        mailing.status = "completed"
+        mailing.end_time = timezone.now()
+        mailing.save()
+        return redirect("mail_messages:home")
+    except Exception:
+        return redirect("mail_messages:home")
+
+def post_mail(request, pk):
     """POST запрос - создаем и отправляем рассылку"""
 
     try:
