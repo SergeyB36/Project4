@@ -1,0 +1,52 @@
+{% extends 'mail_messages/base.html' %}
+{% block title %} Спам во благо {% endblock %}
+{% block content %}
+{% include 'mail_messages/header.html' %}
+<header>
+    <h1 class="display-4 text-center">Спам во благо</h1>
+    <p class="lead">Профессиональная платформа для управления email-рассылками</p>
+    <p class="lead">Создавайте, планируйте и отслеживайте эффективные email-кампании.</p>
+    {% if not user.is_authenticated %}
+    <p class="lead">Для использования нашего сервиса Вам нужно <a class="link-opacity-100" href="{% url 'users:login' %}">войти</a></p>
+    {% endif %}
+</header>
+{% if user.is_authenticated %}
+    {% if 'Moderator' in user.groups.all|join:',' %}
+    <header>
+        <h1 class="display-4">МОДЕРАТОР</h1>
+    </header>
+    {% elif user.is_staff %}
+    <header>
+        <h1 class="display-4">Администратор</h1>
+    </header>
+    {% else %}
+    <header>
+        <p class="display-6">Статистика пользователя:</p>
+    </header>
+    <div class="container">
+        <div class="row">
+            {% if mailing_stats.total and mailing_stats.total != 0 %}
+            <p class="text-sm-start">Рассылок создано: {{ mailing_stats.total }}</p>
+            {% else %}
+            <p class="text-sm-start">Ни одной рассылки не создано</p>
+            {% endif %}
+
+            {% if mailing_stats.count_started %}
+            <p class="text-sm-start">Рассылок готовых к запуску: {{ mailing_stats.count_started }}</p>
+            {% else %}
+            <p class="text-sm-start">Рассылки готовые к запуску отсутствуют</p>
+            {% endif %}
+
+            <p class="text-sm-start">Количество обслуживаемых клиентов: {{ recipients.count }}</p>
+
+            <p class="text-sm-start">Успешно отправленных сообщений: {{ messages.ok_cnt|default:"0" }}</p>
+
+            <p class="text-sm-start">Успешных попыток отправки сообщений: {{ messages.ok_cnt|default:"0" }}</p>
+
+            <p class="text-sm-start">Неуспешных попыток отправки сообщений: {{ messages.failed_cnt|default:"0" }}</p>
+
+        </div>
+        </div>
+    {% endif %}
+{% endif %}
+{% endblock %}

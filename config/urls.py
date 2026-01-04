@@ -6,6 +6,8 @@ from django.urls import include, path
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("users/", include("users.urls", namespace="users")),
+    path("mail_messages/", include("mail_messages.urls", namespace="mail_messages")),
+    path("mail_recipients/", include("mail_recipients.urls", namespace="mail_recipients")),
 ]
 
 if settings.DEBUG:
